@@ -18,10 +18,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy source code
 COPY src/ ./src/
 
-# Default uvicorn launch (overridable by platform PORT env)
-ENV PORT=8000
-EXPOSE 8000
-
-# Run from src/ so `app.main:app` resolves
+# Railway / Render / Cloud Run inject $PORT; default to 8000 for plain `docker run`.
 WORKDIR /app/src
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
